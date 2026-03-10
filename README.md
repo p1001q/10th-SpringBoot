@@ -2,7 +2,7 @@
 > 10th 서경대 **UMC Spring Boot 파트 Repository** 입니다.  
 
 <p>
-  <img src="https://img.shields.io/badge/UMC-9th-6A5ACD?style=for-the-badge&logo=github&logoColor=white" />
+  <img src="https://img.shields.io/badge/UMC-10th-6A5ACD?style=for-the-badge&logo=github&logoColor=white" />
   <img src="https://img.shields.io/badge/Repository-SpringBoot%20Part-6DB33F?style=for-the-badge" />
 </p>
 
