@@ -1,13 +1,13 @@
-package com.example.umc10th_spring;
+package com.example.week04;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Umc10thSpringApplication {
+public class Week04Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Umc10thSpringApplication.class, args);
+        SpringApplication.run(Week04Application.class, args);
     }
 
 }
