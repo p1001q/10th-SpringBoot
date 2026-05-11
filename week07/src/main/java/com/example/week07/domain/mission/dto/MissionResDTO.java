@@ -31,4 +31,13 @@ public class MissionResDTO {
             Long missionId, // 미션 ID
             String status   // 변경된 상태 (completed)
     ) {}
+
+    // 가게 미션 하나의 응답 데이터
+    @Builder
+    public record GetMission(
+            Long missionId,     // 미션 ID
+            Integer point,      // 포인트
+            String conditional  // 미션 조건
+    ) {}
+
 }
