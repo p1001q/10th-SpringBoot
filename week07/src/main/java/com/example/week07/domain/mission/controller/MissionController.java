@@ -5,6 +5,7 @@ import com.example.week07.domain.mission.dto.MissionResDTO;
 import com.example.week07.domain.mission.exception.code.MissionSuccessCode;
 import com.example.week07.domain.mission.service.MissionService;
 import com.example.week07.global.apiPayload.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class MissionController {
     @PostMapping("/api/v1/stores/{storeId}/missions")
     public ApiResponse<Void> createMission(
             @PathVariable Long storeId,                   // URL 경로에서 가게 ID 받기
-            @RequestBody MissionReqDTO.CreateMission dto
+            @Valid @RequestBody MissionReqDTO.CreateMission dto
     ) {
         missionService.createMission(storeId, dto);
         return ApiResponse.onSuccess(MissionSuccessCode.CREATE_STORE_MISSION_OK, null);

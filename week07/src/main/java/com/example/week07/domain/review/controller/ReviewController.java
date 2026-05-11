@@ -5,6 +5,7 @@ import com.example.week07.domain.review.dto.ReviewResDTO;
 import com.example.week07.domain.review.exception.code.ReviewSuccessCode;
 import com.example.week07.domain.review.service.ReviewService;
 import com.example.week07.global.apiPayload.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class ReviewController {
     public ApiResponse<ReviewResDTO.CreateReviewRes> createReview(
             @RequestParam Long memberId,            // 임시 - 나중에 JWT 토큰으로 대체 예정
             @PathVariable Long missionId,           // URL 경로에서 미션 ID 받기
-            @RequestBody ReviewReqDTO.CreateReview dto // 요청 바디에서 리뷰 내용 받기
+            @Valid @RequestBody ReviewReqDTO.CreateReview dto // 요청 바디에서 리뷰 내용 받기 + 검증
     ) {
         return ApiResponse.onSuccess(ReviewSuccessCode.CREATE_REVIEW_OK, reviewService.createReview(memberId, missionId, dto));
     }
