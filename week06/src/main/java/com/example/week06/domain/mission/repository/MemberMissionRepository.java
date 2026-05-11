@@ -17,4 +17,8 @@ public interface MemberMissionRepository extends JpaRepository<MemberMission, Lo
             @Param("isComplete") Boolean isComplete,
             Pageable pageable
     );
+
+    // 특정 회원의 완료된 미션 수 조회 (홈 화면 진행률 표시용)
+    @Query("SELECT COUNT(mm) FROM MemberMission mm WHERE mm.member.id = :memberId AND mm.isComplete = true")
+    int countCompletedMissions(@Param("memberId") Long memberId);
 }

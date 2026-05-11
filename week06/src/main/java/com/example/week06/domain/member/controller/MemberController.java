@@ -23,13 +23,15 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberSuccessCode.SIGN_UP_OK, memberService.signUp(dto));
     }
 
-    // 홈 화면 조회
-    // GET /home?memberId=1
+    // 홈 화면 조회 (선택 지역 미도전 미션 목록, 페이징)
+    // GET /home?memberId=1&page=0&size=10
     @GetMapping("/home")
     public ApiResponse<MemberResDTO.HomeInfo> getHome(
-            @RequestParam Long memberId // 쿼리 파라미터로 회원 ID 받기 (임시, 추후 JWT 대체)
+            @RequestParam Long memberId,                        // 쿼리 파라미터로 회원 ID 받기 (임시, 추후 JWT 대체)
+            @RequestParam(defaultValue = "0") int page,        // 페이지 번호 (0부터 시작)
+            @RequestParam(defaultValue = "10") int size        // 페이지 크기 (기본값 10)
     ) {
-        return ApiResponse.onSuccess(MemberSuccessCode.GET_HOME_OK, memberService.getHome(memberId));
+        return ApiResponse.onSuccess(MemberSuccessCode.GET_HOME_OK, memberService.getHome(memberId, page, size));
     }
 
     // 마이페이지 조회
