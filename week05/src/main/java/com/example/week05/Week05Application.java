@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Week05Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Week04Application.class, args);
+        SpringApplication.run(Week05Application.class, args);
     }
 
 }
