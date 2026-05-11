@@ -3,7 +3,7 @@ package com.example.week06.domain.member.entity;
 import com.example.week06.domain.member.entity.mapping.MemberFood;
 import com.example.week06.domain.member.entity.mapping.MemberTerm;
 import com.example.week06.global.entity.BaseEntity;
-import com.example.week06.domain.member.enums.Address;
+import com.example.week06.global.enums.Address;
 import com.example.week06.domain.member.enums.Gender;
 import com.example.week06.domain.member.enums.SocialType;
 import jakarta.persistence.*;

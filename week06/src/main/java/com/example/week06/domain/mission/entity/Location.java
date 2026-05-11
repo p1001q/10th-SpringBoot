@@ -1,6 +1,6 @@
 package com.example.week06.domain.mission.entity;
 
-import com.example.week06.domain.mission.enums.Address;
+import com.example.week06.global.enums.Address;
 import jakarta.persistence.*;
 import lombok.*;
 
