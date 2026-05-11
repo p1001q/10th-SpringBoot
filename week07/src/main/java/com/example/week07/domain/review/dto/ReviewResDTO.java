@@ -2,6 +2,7 @@ package com.example.week07.domain.review.dto;
 
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ReviewResDTO {
@@ -30,10 +31,23 @@ public class ReviewResDTO {
             Long reviewId // 생성된 리뷰 ID
     ) {}
 
-    // 내 리뷰 목록 응답 데이터
+    // 내 리뷰 하나의 정보
     @Builder
-    public record ReviewListRes(
-            List<StoreReviewInfo> reviews, // 리뷰 목록
-            Integer totalCount             // 전체 리뷰 수
+    public record MyReviewInfo(
+            Long reviewId,        // 리뷰 ID
+            String storeName,     // 가게 이름
+            BigDecimal star,      // 별점
+            String content,       // 리뷰 내용
+            String createdAt,     // 작성일
+            String replyContent   // 사장님 답글 (없으면 null)
+    ) {}
+
+    // 내 리뷰 목록 응답 데이터 (커서 기반 페이지네이션)
+    @Builder
+    public record MyReviewListRes(
+            List<MyReviewInfo> reviews, // 리뷰 목록
+            Boolean hasNext,            // 다음 데이터 존재 여부
+            String nextCursor,          // 다음 요청에 사용할 커서값
+            Integer listSize            // 현재 응답에 담긴 리뷰 수
     ) {}
 }
