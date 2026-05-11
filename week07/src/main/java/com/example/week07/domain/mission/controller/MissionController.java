@@ -16,16 +16,16 @@ public class MissionController {
 
     private final MissionService missionService;
 
-    // 미션 목록 조회 (진행중 / 완료, 페이징)
-    // GET /missions?memberId=1&status=ongoing&page=0&size=10
+    // 내 미션 목록 조회 (진행중 / 완료, 오프셋 페이징)
+    // GET /missions?status=ongoing&page=0&size=10
     @GetMapping("/missions")
     public ApiResponse<MissionResDTO.MissionListRes> getMissions(
-            @RequestParam Long memberId,                        // 임시 - 나중에 JWT 토큰으로 대체 예정
+            @RequestBody MissionReqDTO.GetMissionsReq req,      // 회원 ID를 Request Body에서 받음
             @RequestParam String status,                        // ongoing(진행중) 또는 completed(완료)
             @RequestParam(defaultValue = "0") int page,        // 페이지 번호 (0부터 시작)
             @RequestParam(defaultValue = "10") int size        // 페이지 크기 (기본값 10)
     ) {
-        return ApiResponse.onSuccess(MissionSuccessCode.GET_MISSIONS_OK, missionService.getMissions(memberId, status, page, size));
+        return ApiResponse.onSuccess(MissionSuccessCode.GET_MISSIONS_OK, missionService.getMissions(req.memberId(), status, page, size));
     }
 
     // 가게 미션 생성

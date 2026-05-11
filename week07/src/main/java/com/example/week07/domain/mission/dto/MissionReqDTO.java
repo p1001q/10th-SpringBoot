@@ -6,6 +6,12 @@ import java.time.LocalDate;
 
 public class MissionReqDTO {
 
+    // 내 미션 목록 조회 요청 DTO
+    @Builder
+    public record GetMissionsReq(
+            Long memberId  // 조회할 회원 ID
+    ) {}
+
     // 가게 미션 생성 요청 DTO
     @Builder
     public record CreateMission(
