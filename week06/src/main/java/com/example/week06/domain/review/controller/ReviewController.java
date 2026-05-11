@@ -33,4 +33,15 @@ public class ReviewController {
     ) {
         return ApiResponse.onSuccess(ReviewSuccessCode.GET_REVIEWS_OK, reviewService.getMyReviews(memberId));
     }
+
+    // 가게 리뷰 목록 조회 (페이징)
+    // GET /stores/{storeId}/reviews?page=0&size=10
+    @GetMapping("/stores/{storeId}/reviews")
+    public ApiResponse<ReviewResDTO.StoreReviewListRes> getStoreReviews(
+            @PathVariable Long storeId,              // URL 경로에서 가게 ID 받기
+            @RequestParam(defaultValue = "0") int page,   // 페이지 번호 (기본값 0)
+            @RequestParam(defaultValue = "10") int size   // 페이지 크기 (기본값 10)
+    ) {
+        return ApiResponse.onSuccess(ReviewSuccessCode.GET_STORE_REVIEWS_OK, reviewService.getStoreReviews(storeId, page, size));
+    }
 }

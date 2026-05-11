@@ -42,9 +42,9 @@ public class Review {
     @JoinColumn(name = "user_id", nullable = false)
     private Member member;
 
-    // 리뷰에 달린 답글 (reply 테이블과 연결)
+    // 리뷰에 달린 답글 (reply 테이블과 연결) - 리뷰 작성 시점엔 없을 수 있으므로 nullable
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_id", nullable = false)
+    @JoinColumn(name = "reply_id")
     private Reply reply;
 
     // 리뷰에 첨부된 사진 목록 (review_photo 테이블과 연결)
