@@ -6,6 +6,7 @@ import com.example.week07.domain.review.dto.ReviewReqDTO;
 import com.example.week07.domain.review.dto.ReviewResDTO;
 import com.example.week07.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,6 +40,34 @@ public class ReviewConverter {
                 .createdAt(review.getCreatedAt().toString()) // 작성일 문자열 변환
                 .star(review.getStar())                    // 별점
                 .content(review.getContent())              // 리뷰 내용
+                .build();
+    }
+
+    // Review 엔티티 하나를 내 리뷰 응답 DTO로 변환
+    public static ReviewResDTO.MyReviewInfo toMyReviewInfo(Review review) {
+        return ReviewResDTO.MyReviewInfo.builder()
+                .reviewId(review.getId())                          // 리뷰 ID
+                .storeName(review.getStore().getName())            // 가게 이름
+                .star(review.getStar())                            // 별점
+                .content(review.getContent())                      // 리뷰 내용
+                .createdAt(review.getCreatedAt().toString())       // 작성일
+                .replyContent(review.getReply() != null            // 사장님 답글 (없으면 null)
+                        ? review.getReply().getContent() : null)
+                .build();
+    }
+
+    // Slice 결과를 내 리뷰 목록 응답 DTO로 변환
+    public static ReviewResDTO.MyReviewListRes toMyReviewListRes(Slice<Review> slice, String nextCursor) {
+        List<ReviewResDTO.MyReviewInfo> reviews = slice.getContent()
+                .stream()
+                .map(ReviewConverter::toMyReviewInfo)
+                .toList();
+
+        return ReviewResDTO.MyReviewListRes.builder()
+                .reviews(reviews)
+                .hasNext(slice.hasNext())   // 다음 데이터 존재 여부
+                .nextCursor(nextCursor)     // 다음 요청에 사용할 커서
+                .listSize(reviews.size())   // 현재 응답 리뷰 수
                 .build();
     }
 

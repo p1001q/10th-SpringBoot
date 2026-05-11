@@ -25,13 +25,16 @@ public class ReviewController {
         return ApiResponse.onSuccess(ReviewSuccessCode.CREATE_REVIEW_OK, reviewService.createReview(memberId, missionId, dto));
     }
 
-    // 내가 작성한 리뷰 목록 조회
-    // GET /mypage/reviews?memberId=1
+    // 내가 작성한 리뷰 목록 조회 (커서 기반 페이지네이션)
+    // GET /mypage/reviews?memberId=1&query=id&cursor=id:10&size=10
     @GetMapping("/mypage/reviews")
-    public ApiResponse<ReviewResDTO.ReviewListRes> getMyReviews(
-            @RequestParam Long memberId // 임시 - 나중에 JWT 토큰으로 대체 예정
+    public ApiResponse<ReviewResDTO.MyReviewListRes> getMyReviews(
+            @RequestParam Long memberId,                          // 임시 - 나중에 JWT 토큰으로 대체 예정
+            @RequestParam(defaultValue = "id") String query,     // 정렬 기준: id(ID순) 또는 star(별점순)
+            @RequestParam(required = false) String cursor,        // 커서값 (없으면 처음부터 조회)
+            @RequestParam(defaultValue = "10") int size           // 페이지 크기
     ) {
-        return ApiResponse.onSuccess(ReviewSuccessCode.GET_REVIEWS_OK, reviewService.getMyReviews(memberId));
+        return ApiResponse.onSuccess(ReviewSuccessCode.GET_REVIEWS_OK, reviewService.getMyReviews(memberId, query, cursor, size));
     }
 
     // 가게 리뷰 목록 조회 (페이징)
