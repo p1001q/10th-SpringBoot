@@ -3,17 +3,25 @@ package com.example.week08.domain.member.service;
 import com.example.week08.domain.member.converter.MemberConverter;
 import com.example.week08.domain.member.dto.MemberReqDTO;
 import com.example.week08.domain.member.dto.MemberResDTO;
+import com.example.week08.domain.member.entity.Food;
 import com.example.week08.domain.member.entity.Member;
+import com.example.week08.domain.member.entity.Term;
+import com.example.week08.domain.member.entity.mapping.MemberFood;
+import com.example.week08.domain.member.entity.mapping.MemberTerm;
+import com.example.week08.domain.member.enums.FoodName;
+import com.example.week08.domain.member.enums.TermName;
 import com.example.week08.domain.member.exception.MemberException;
 import com.example.week08.domain.member.exception.code.MemberErrorCode;
-import com.example.week08.domain.member.repository.MemberRepository;
+import com.example.week08.domain.member.repository.*;
 import com.example.week08.domain.mission.entity.Mission;
 import com.example.week08.domain.mission.repository.MemberMissionRepository;
 import com.example.week08.domain.mission.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +30,53 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MissionRepository missionRepository;
     private final MemberMissionRepository memberMissionRepository;
+    private final FoodRepository foodRepository;
+    private final TermRepository termRepository;
+    private final MemberFoodRepository memberFoodRepository;
+    private final MemberTermRepository memberTermRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // 회원가입 - 다음 주차에 구현 예정
+    // 회원가입 - 이메일 중복 확인 → Member 저장 → 약관/음식 저장
+    @Transactional
     public MemberResDTO.SignUpRes signUp(MemberReqDTO.SignUp dto) {
-        return null;
+        // 이메일 중복 확인
+        if (memberRepository.findByEmail(dto.email()).isPresent()) {
+            throw new MemberException(MemberErrorCode.DUPLICATE_EMAIL);
+        }
+
+        // 비밀번호 BCrypt 암호화 후 Member 저장
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        Member member = memberRepository.save(MemberConverter.toMember(dto, encodedPassword));
+
+        // 동의한 약관 저장 (true인 항목만 MemberTerm 생성)
+        saveTermIfAgreed(member, TermName.AGE, dto.agreeAge());
+        saveTermIfAgreed(member, TermName.SERVICE, dto.agreeService());
+        saveTermIfAgreed(member, TermName.PRIVACY, dto.agreePrivacy());
+        saveTermIfAgreed(member, TermName.LOCATION, dto.agreeLocation());
+        saveTermIfAgreed(member, TermName.MARKETING, dto.agreeMarketing());
+
+        // 선호 음식 저장
+        if (dto.favoriteFoods() != null) {
+            dto.favoriteFoods().forEach(foodNameStr -> {
+                FoodName foodName = FoodName.valueOf(foodNameStr);
+                // Food 없으면 새로 생성
+                Food food = foodRepository.findByName(foodName)
+                        .orElseGet(() -> foodRepository.save(Food.builder().name(foodName).build()));
+                memberFoodRepository.save(MemberFood.builder().member(member).food(food).build());
+            });
+        }
+
+        return MemberConverter.toSignUpRes(member);
+    }
+
+    // 약관 동의 여부 확인 후 MemberTerm 저장
+    private void saveTermIfAgreed(Member member, TermName termName, Boolean agreed) {
+        if (Boolean.TRUE.equals(agreed)) {
+            // Term 없으면 새로 생성
+            Term term = termRepository.findByName(termName)
+                    .orElseGet(() -> termRepository.save(Term.builder().name(termName).build()));
+            memberTermRepository.save(MemberTerm.builder().member(member).term(term).build());
+        }
     }
 
     // 홈 화면 조회 - 선택 지역 기반 미도전 미션 목록 (페이징)
