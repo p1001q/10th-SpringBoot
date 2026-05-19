@@ -11,7 +11,11 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
-// 인증은 됐지만 권한이 없는 경우 (403) 처리
+/**
+ * [미션2] 인가 실패 핸들러
+ * - Private API에 접근 권한이 없는 경우 (403 Forbidden)
+ * - 응답 형식을 ApiResponse로 통일
+ */
 public class CustomAccessDenied implements AccessDeniedHandler {
 
     @Override
