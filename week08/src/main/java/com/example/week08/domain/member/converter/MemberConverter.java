@@ -1,8 +1,12 @@
 package com.example.week08.domain.member.converter;
 
+import com.example.week08.domain.member.dto.MemberReqDTO;
 import com.example.week08.domain.member.dto.MemberResDTO;
 import com.example.week08.domain.member.entity.Member;
+import com.example.week08.domain.member.enums.Gender;
+import com.example.week08.domain.member.enums.SocialType;
 import com.example.week08.domain.mission.entity.Mission;
+import com.example.week08.global.enums.Address;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -10,6 +14,30 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class MemberConverter {
+
+    // SignUp DTO + 암호화된 비밀번호 → Member 엔티티 변환
+    public static Member toMember(MemberReqDTO.SignUp dto, String encodedPassword) {
+        return Member.builder()
+                .email(dto.email())
+                .password(encodedPassword)
+                .name(dto.name())
+                .gender(Gender.valueOf(dto.gender()))           // "MALE" / "FEMALE" / "NONE"
+                .birth(LocalDate.parse(dto.birth()))           // "2003-10-01" 형식
+                .address(Address.valueOf(dto.address()))       // Address enum 이름
+                .detailAddress(dto.detailAddress())
+                .socialUid("")                                 // 폼 로그인은 소셜 UID 없음
+                .socialType(SocialType.NONE)                  // 폼 로그인은 소셜 타입 NONE
+                .profileUrl("")                               // 기본값 (추후 프로필 업로드 구현)
+                .build();
+    }
+
+    // Member 엔티티 → 회원가입 응답 DTO 변환
+    public static MemberResDTO.SignUpRes toSignUpRes(Member member) {
+        return MemberResDTO.SignUpRes.builder()
+                .memberId(member.getId())
+                .name(member.getName())
+                .build();
+    }
 
     // Member 엔티티를 마이페이지 응답 DTO로 변환
     public static MemberResDTO.MyPageInfo toMyPageInfo(Member member) {
