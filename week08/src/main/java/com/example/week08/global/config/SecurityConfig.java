@@ -15,35 +15,28 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    // Public API: 인증 없이 접근 가능
     private final String[] allowUris = {
-            // Swagger 허용
-            "/swagger-ui/**",
+            "/auth/**",              // 회원가입 등 인증 불필요 엔드포인트
+            "/swagger-ui/**",        // Swagger UI
             "/swagger-resources/**",
-            "/v3/api-docs/**",
-            "/auth/**"
+            "/v3/api-docs/**"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)   // HTTP Basic 인증 비활성화
+                .formLogin(AbstractHttpConfigurer::disable)   // 폼 로그인 비활성화 (REST API이므로)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(allowUris).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(allowUris).permitAll()  // Public API
+                        .anyRequest().authenticated()            // Private API
                 )
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/swagger-ui/index.html", true)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                )
-                // 예외 상황 핸들러
+                // 인증/인가 실패 시 응답 통일
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(customAccessDenied())
-                        .authenticationEntryPoint(customEntryPoint())
+                        .authenticationEntryPoint(customEntryPoint())  // 401: 미인증
+                        .accessDeniedHandler(customAccessDenied())     // 403: 권한 없음
                 );
 
         return http.build();
