@@ -59,6 +59,9 @@ public class Member extends BaseEntity { // BaseEntity: createdAt, updatedAt, de
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
+    @Column(name = "password", length = 255) // 소셜 로그인 사용자는 null 허용
+    private String password;
+
     @Column(name = "phone_number", length = 11) // NULL 허용 (선택 입력)
     private String phoneNumber;
 
