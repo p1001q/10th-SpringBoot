@@ -11,7 +11,11 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
 
-// 인증되지 않은 사용자가 인증이 필요한 요청을 한 경우 (401) 처리
+/**
+ * [미션2] 인증 실패 핸들러
+ * - 로그인하지 않은 사용자가 Private API에 접근한 경우 (401 Unauthorized)
+ * - 응답 형식을 ApiResponse로 통일
+ */
 public class CustomEntryPoint implements AuthenticationEntryPoint {
 
     @Override
