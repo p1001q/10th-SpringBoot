@@ -42,6 +42,12 @@ public class MemberReqDTO {
             Boolean inquiryReplyAlert // 문의 답글 알림
     ) {}
 
+    // 로그인 요청 데이터
+    public record Login(
+            String email,    // 이메일
+            String password  // 비밀번호 (원문)
+    ) {}
+
     // 1:1 문의 생성 요청 데이터
     public record CreateInquiry(
             Long memberId, // 임시 - 나중에 JWT 토큰으로 대체 예정

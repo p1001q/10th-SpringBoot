@@ -16,6 +16,9 @@ import com.example.week09.domain.member.repository.*;
 import com.example.week09.domain.mission.entity.Mission;
 import com.example.week09.domain.mission.repository.MemberMissionRepository;
 import com.example.week09.domain.mission.repository.MissionRepository;
+import com.example.week09.global.security.entity.AuthMember;
+import com.example.week09.global.security.service.CustomUserDetailsService;
+import com.example.week09.global.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +38,8 @@ public class MemberService {
     private final MemberFoodRepository memberFoodRepository;
     private final MemberTermRepository memberTermRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     // 회원가입 - 이메일 중복 확인 → Member 저장 → 약관/음식 저장
     @Transactional
@@ -77,6 +82,26 @@ public class MemberService {
                     .orElseGet(() -> termRepository.save(Term.builder().name(termName).build()));
             memberTermRepository.save(MemberTerm.builder().member(member).term(term).build());
         }
+    }
+
+    // 로그인 - 이메일/비밀번호 검증 후 JWT 액세스 토큰 발급
+    public MemberResDTO.LoginRes login(MemberReqDTO.Login dto) {
+        // 이메일로 회원 조회 - 없으면 예외
+        Member member = memberRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        // 비밀번호 검증 - 일치하지 않으면 예외
+        if (!passwordEncoder.matches(dto.password(), member.getPassword())) {
+            throw new MemberException(MemberErrorCode.INVALID_PASSWORD);
+        }
+
+        // AuthMember(UserDetails) 로드 후 JWT 액세스 토큰 발급
+        AuthMember authMember = (AuthMember) customUserDetailsService.loadUserByUsername(dto.email());
+        String accessToken = jwtUtil.createAccessToken(authMember);
+
+        return MemberResDTO.LoginRes.builder()
+                .accessToken(accessToken)
+                .build();
     }
 
     // 홈 화면 조회 - 선택 지역 기반 미도전 미션 목록 (페이징)

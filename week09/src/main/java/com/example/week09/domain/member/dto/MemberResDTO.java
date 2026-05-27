@@ -6,6 +6,12 @@ import java.util.List;
 
 public class MemberResDTO {
 
+    // 로그인 응답 데이터
+    @Builder
+    public record LoginRes(
+            String accessToken // 발급된 JWT 액세스 토큰
+    ) {}
+
     // 회원가입 응답 데이터
     @Builder
     public record SignUpRes(

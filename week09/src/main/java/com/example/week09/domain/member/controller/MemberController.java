@@ -14,6 +14,15 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    // 로그인 - 이메일/비밀번호 검증 후 JWT 액세스 토큰 발급
+    // POST /auth/login
+    @PostMapping("/auth/login")
+    public ApiResponse<MemberResDTO.LoginRes> login(
+            @RequestBody MemberReqDTO.Login dto // 요청 바디에서 이메일·비밀번호 받기
+    ) {
+        return ApiResponse.onSuccess(MemberSuccessCode.LOGIN_OK, memberService.login(dto));
+    }
+
     // 회원가입
     // POST /auth/users/signup
     @PostMapping("/auth/users/signup")
