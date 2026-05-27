@@ -123,6 +123,11 @@ public class MemberService {
         return MemberConverter.toHomeInfo(member, completedCount, availableMissions);
     }
 
+    // 마이페이지 조회 (JWT 기반 v2) - AuthMember에서 직접 Member 추출
+    public MemberResDTO.GetInfo getInfo(AuthMember authMember) {
+        return MemberConverter.toGetInfo(authMember.getMember());
+    }
+
     // 마이페이지 조회
     public MemberResDTO.MyPageInfo getMyPage(Long memberId) {
         // 회원 조회 - 없으면 예외 발생

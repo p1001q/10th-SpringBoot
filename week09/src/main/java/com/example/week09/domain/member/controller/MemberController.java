@@ -5,7 +5,9 @@ import com.example.week09.domain.member.dto.MemberResDTO;
 import com.example.week09.domain.member.exception.code.MemberSuccessCode;
 import com.example.week09.domain.member.service.MemberService;
 import com.example.week09.global.apiPayload.ApiResponse;
+import com.example.week09.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController // JSON 형식으로 응답하는 컨트롤러
@@ -30,6 +32,15 @@ public class MemberController {
             @RequestBody MemberReqDTO.SignUp dto // 요청 바디에서 회원가입 데이터 받기
     ) {
         return ApiResponse.onSuccess(MemberSuccessCode.SIGN_UP_OK, memberService.signUp(dto));
+    }
+
+    // 마이페이지 조회 v2 - JWT 토큰으로 사용자 인증 후 정보 반환
+    // GET /v2/users/me
+    @GetMapping("/v2/users/me")
+    public ApiResponse<MemberResDTO.GetInfo> getInfo(
+            @AuthenticationPrincipal AuthMember member // SecurityContext에서 인증된 사용자 추출
+    ) {
+        return ApiResponse.onSuccess(MemberSuccessCode.GET_MY_PAGE_OK, memberService.getInfo(member));
     }
 
     // 홈 화면 조회 (선택 지역 미도전 미션 목록, 페이징)

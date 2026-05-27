@@ -39,6 +39,17 @@ public class MemberConverter {
                 .build();
     }
 
+    // Member 엔티티 → JWT 기반 마이페이지 응답 DTO 변환 (v2)
+    public static MemberResDTO.GetInfo toGetInfo(Member member) {
+        return MemberResDTO.GetInfo.builder()
+                .name(member.getName())
+                .profileUrl(member.getProfileUrl())
+                .email(member.getEmail())
+                .phoneNumber(member.getPhoneNumber())
+                .point(member.getPoint())
+                .build();
+    }
+
     // Member 엔티티를 마이페이지 응답 DTO로 변환
     public static MemberResDTO.MyPageInfo toMyPageInfo(Member member) {
         return MemberResDTO.MyPageInfo.builder()

@@ -12,6 +12,16 @@ public class MemberResDTO {
             String accessToken // 발급된 JWT 액세스 토큰
     ) {}
 
+    // 마이페이지 조회 응답 데이터 (JWT 기반 v2)
+    @Builder
+    public record GetInfo(
+            String name,        // 이름
+            String profileUrl,  // 프로필 이미지 URL
+            String email,       // 이메일
+            String phoneNumber, // 전화번호
+            Integer point       // 보유 포인트
+    ) {}
+
     // 회원가입 응답 데이터
     @Builder
     public record SignUpRes(
