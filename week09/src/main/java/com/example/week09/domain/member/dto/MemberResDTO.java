@@ -6,9 +6,15 @@ import java.util.List;
 
 public class MemberResDTO {
 
-    // 로그인 응답 데이터
+    // 로그인 응답 데이터 (이메일/비밀번호 로그인)
     @Builder
     public record LoginRes(
+            String accessToken // 발급된 JWT 액세스 토큰
+    ) {}
+
+    // 로그인 응답 데이터 (OAuth 로그인)
+    @Builder
+    public record Login(
             String accessToken // 발급된 JWT 액세스 토큰
     ) {}
 

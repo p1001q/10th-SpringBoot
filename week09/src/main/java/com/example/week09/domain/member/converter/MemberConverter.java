@@ -7,6 +7,7 @@ import com.example.week09.domain.member.enums.Gender;
 import com.example.week09.domain.member.enums.SocialType;
 import com.example.week09.domain.mission.entity.Mission;
 import com.example.week09.global.enums.Address;
+import com.example.week09.global.security.dto.OAuthDTO;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -14,6 +15,26 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class MemberConverter {
+
+    // OAuthDTO → Member 엔티티 변환 (OAuth 신규 회원 가입)
+    public static Member toMember(OAuthDTO dto) {
+        return Member.builder()
+                .email(dto.getSocialEmail())
+                .name(dto.getName())
+                .socialUid(dto.getSocialUid())
+                .socialType(dto.getSocialType())
+                .profileUrl("")       // 기본값 (추후 프로필 업로드 구현)
+                .birth(LocalDate.of(2000, 1, 1)) // 기본값 (OAuth에서 제공 안 함)
+                .detailAddress("")    // 기본값 (OAuth에서 제공 안 함)
+                .build();
+    }
+
+    // accessToken → 로그인 응답 DTO 변환 (OAuth 로그인)
+    public static MemberResDTO.Login toLogin(String accessToken) {
+        return MemberResDTO.Login.builder()
+                .accessToken(accessToken)
+                .build();
+    }
 
     // SignUp DTO + 암호화된 비밀번호 → Member 엔티티 변환
     public static Member toMember(MemberReqDTO.SignUp dto, String encodedPassword) {

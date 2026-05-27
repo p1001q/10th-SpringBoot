@@ -16,7 +16,10 @@ public enum MemberErrorCode implements BaseErrorCode {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "MEMBER409_1", "이미 사용 중인 이메일입니다."),
 
     // 비밀번호가 일치하지 않을 때 사용하는 에러 코드
-    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "MEMBER401_1", "비밀번호가 올바르지 않습니다.");
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "MEMBER401_1", "비밀번호가 올바르지 않습니다."),
+
+    // 지원하지 않는 소셜 로그인 제공자로 시도할 때 사용하는 에러 코드
+    NOT_SUPPORT_SOCIAL_PROVIDER(HttpStatus.BAD_REQUEST, "MEMBER400_1", "지원하지 않는 소셜 로그인 제공자입니다.");
 
     private final HttpStatus status;
     private final String code;

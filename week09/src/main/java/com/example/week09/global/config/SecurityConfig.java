@@ -3,6 +3,8 @@ package com.example.week09.global.config;
 import com.example.week09.global.security.exception.CustomAccessDenied;
 import com.example.week09.global.security.exception.CustomEntryPoint;
 import com.example.week09.global.security.filter.JwtAuthFilter;
+import com.example.week09.global.security.handler.OAuthSuccessHandler;
+import com.example.week09.global.security.service.CustomOAuthService;
 import com.example.week09.global.security.service.CustomUserDetailsService;
 import com.example.week09.global.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,19 +31,28 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomOAuthService customOAuthService;
 
     // [미션2] Public API: 인증 없이 접근 가능
     private final String[] allowUris = {
-            "/auth/**",              // 회원가입 등 인증 불필요 엔드포인트
-            "/swagger-ui/**",        // Swagger UI
+            "/auth/**",                  // 회원가입 등 인증 불필요 엔드포인트
+            "/swagger-ui/**",            // Swagger UI
             "/swagger-resources/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/login/oauth2/code/**",     // OAuth2 콜백 URL
+            "/oauth2/**"                 // OAuth2 인가 요청 URL
     };
 
     // JWT 필터 Bean: JwtUtil, CustomUserDetailsService를 DI받아 생성
     @Bean
     public JwtAuthFilter jwtAuthFilter() {
         return new JwtAuthFilter(jwtUtil, customUserDetailsService);
+    }
+
+    // OAuth 성공 핸들러 Bean: JWT 토큰 발급 후 응답
+    @Bean
+    public OAuthSuccessHandler oAuthSuccessHandler() {
+        return new OAuthSuccessHandler(jwtUtil);
     }
 
     @Bean
@@ -59,6 +70,13 @@ public class SecurityConfig {
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 // JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 삽입
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                // OAuth2 소셜 로그인 설정
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(endpoint -> endpoint
+                                .userService(customOAuthService) // 유저 정보 조회 서비스
+                        )
+                        .successHandler(oAuthSuccessHandler())   // 로그인 성공 시 JWT 발급
+                )
                 // 로그아웃
                 .logout(logout -> logout
                         .logoutUrl("/logout")
