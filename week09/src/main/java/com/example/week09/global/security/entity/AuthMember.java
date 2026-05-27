@@ -25,12 +25,13 @@ public class AuthMember implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return member.getPassword();
+        // OAuth 로그인 기반이므로 비밀번호 불필요
+        return null;
     }
 
     @Override
     public String getUsername() {
-        // 이메일을 사용자 식별자로 사용
-        return member.getEmail();
+        // 소셜 UID를 사용자 식별자로 사용 (OAuth 기반)
+        return member.getSocialUid();
     }
 }

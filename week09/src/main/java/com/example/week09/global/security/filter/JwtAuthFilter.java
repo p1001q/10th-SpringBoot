@@ -1,5 +1,6 @@
 package com.example.week09.global.security.filter;
 
+import com.example.week09.domain.member.enums.SocialType;
 import com.example.week09.global.apiPayload.ApiResponse;
 import com.example.week09.global.apiPayload.code.BaseErrorCode;
 import com.example.week09.global.apiPayload.code.GeneralErrorCode;
@@ -45,10 +46,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             token = token.replace("Bearer ", "");
             // AccessToken 검증하기: 올바른 토큰이면
             if (jwtUtil.isValid(token)) {
-                // 토큰에서 이메일 추출
-                String email = jwtUtil.getEmail(token);
-                // 인증 객체 생성: 이메일로 찾아온 뒤, 인증 객체 생성
-                UserDetails user = customUserDetailsService.loadUserByUsername(email);
+                // 토큰에서 UID, 소셜 타입 추출
+                String uid = jwtUtil.getUid(token);
+                SocialType socialType = jwtUtil.getSocialType(token);
+                // UID + 소셜 타입으로 사용자 조회 후 인증 객체 생성
+                UserDetails user = customUserDetailsService.loadUserByUidAndSocialType(socialType, uid);
                 Authentication auth = new UsernamePasswordAuthenticationToken(
                         user,
                         null,

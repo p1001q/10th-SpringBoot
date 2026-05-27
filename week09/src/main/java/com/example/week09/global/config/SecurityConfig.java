@@ -39,8 +39,8 @@ public class SecurityConfig {
             "/swagger-ui/**",            // Swagger UI
             "/swagger-resources/**",
             "/v3/api-docs/**",
-            "/login/oauth2/code/**",     // OAuth2 콜백 URL
-            "/oauth2/**"                 // OAuth2 인가 요청 URL
+            "/oauth/callback/**",        // OAuth2 콜백 URL
+            "/oauth/authorize/**"        // OAuth2 인가 요청 URL
     };
 
     // JWT 필터 Bean: JwtUtil, CustomUserDetailsService를 DI받아 생성
@@ -72,10 +72,16 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 // OAuth2 소셜 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(endpoint -> endpoint
-                                .userService(customOAuthService) // 유저 정보 조회 서비스
+                        .authorizationEndpoint(auth -> auth
+                                .baseUri("/oauth/authorize")       // 인가 요청 URL
                         )
-                        .successHandler(oAuthSuccessHandler())   // 로그인 성공 시 JWT 발급
+                        .redirectionEndpoint(redirect -> redirect
+                                .baseUri("/oauth/callback/**")    // 인가 서버 콜백 URL
+                        )
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuthService)  // 유저 정보 조회 서비스
+                        )
+                        .successHandler(oAuthSuccessHandler())    // 로그인 성공 시 JWT 발급
                 )
                 // 로그아웃
                 .logout(logout -> logout

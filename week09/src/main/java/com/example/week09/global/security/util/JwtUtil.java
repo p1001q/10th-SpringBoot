@@ -1,5 +1,6 @@
 package com.example.week09.global.security.util;
 
+import com.example.week09.domain.member.enums.SocialType;
 import com.example.week09.global.security.entity.AuthMember;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -36,15 +37,21 @@ public class JwtUtil {
         return createToken(member, accessExpiration);
     }
 
-    /** 토큰에서 이메일 가져오기
-     *
-     * @param token 유저 정보를 추출할 토큰
-     * @return 유저 이메일을 토큰에서 추출합니다
-     */
-    public String getEmail(String token) {
+    // 토큰에서 소셜 UID(subject) 추출
+    public String getUid(String token) {
         try {
-            return getClaims(token).getPayload().getSubject(); // Parsing해서 Subject 가져오기
+            return getClaims(token).getPayload().getSubject();
         } catch (JwtException e) {
+            return null;
+        }
+    }
+
+    // 토큰에서 소셜 타입 추출
+    public SocialType getSocialType(String token) {
+        try {
+            String socialType = getClaims(token).getPayload().get("social_type", String.class);
+            return SocialType.valueOf(socialType);
+        } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
     }
@@ -73,12 +80,12 @@ public class JwtUtil {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .subject(member.getUsername()) // User 이메일을 Subject로
+                .subject(member.getUsername()) // 소셜 UID를 Subject로
                 .claim("role", authorities)
-                .claim("email", member.getUsername())
-                .issuedAt(Date.from(now)) // 언제 발급한지
-                .expiration(Date.from(now.plus(expiration))) // 언제까지 유효한지
-                .signWith(secretKey) // sign할 Key
+                .claim("social_type", member.getMember().getSocialType().name()) // 소셜 타입 저장
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(expiration)))
+                .signWith(secretKey)
                 .compact();
     }
 
