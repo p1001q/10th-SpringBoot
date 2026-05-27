@@ -41,7 +41,7 @@ public class CustomOAuthService extends DefaultOAuth2UserService {
             providerId = SocialType.valueOf(
                     userRequest.getClientRegistration().getRegistrationId().toUpperCase()
             );
-            socialUid = String.valueOf((Long) oAuthMember.getAttribute("id"));
+            socialUid = String.valueOf(oAuthMember.getAttribute("id"));
         } catch (IllegalArgumentException e) {
             throw new MemberException(MemberErrorCode.NOT_SUPPORT_SOCIAL_PROVIDER);
         }

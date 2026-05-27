@@ -70,18 +70,18 @@ public class SecurityConfig {
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 // JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 삽입
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
-                // OAuth2 소셜 로그인 설정
+                // [미션3] OAuth2 소셜 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(auth -> auth
                                 .baseUri("/oauth/authorize")       // 인가 요청 URL
                         )
                         .redirectionEndpoint(redirect -> redirect
-                                .baseUri("/oauth/callback/**")    // 인가 서버 콜백 URL
+                                .baseUri("/oauth/callback/**")     // 인가 서버 콜백 URL
                         )
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuthService)  // 유저 정보 조회 서비스
+                                .userService(customOAuthService)   // 유저 정보 조회 서비스
                         )
-                        .successHandler(oAuthSuccessHandler())    // 로그인 성공 시 JWT 발급
+                        .successHandler(oAuthSuccessHandler())     // 로그인 성공 시 JWT 발급
                 )
                 // 로그아웃
                 .logout(logout -> logout
